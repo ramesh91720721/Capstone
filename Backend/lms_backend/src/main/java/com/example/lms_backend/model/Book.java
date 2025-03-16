@@ -14,7 +14,7 @@ public class Book {
 	private int book_id;
 	private String title;
 	private String author;
-	private String ISBN;
+	private String isbn;
 	private int qty;
 	private int branch_id;
 	private int avilable;
@@ -29,7 +29,7 @@ public class Book {
 		
 		this.title = title;
 		this.author = author;
-		this.ISBN = isbn;
+		this.isbn = isbn;
 		this.qty = qty;
 		this.branch_id = branch;
 		this.avilable = available;
@@ -59,11 +59,11 @@ public class Book {
 	}
 
 	public String getISBN() {
-		return ISBN;
+		return isbn;
 	}
 
 	public void setISBN(String iSBN) {
-		ISBN = iSBN;
+		this.isbn = iSBN;
 	}
 
 	public int getQty() {

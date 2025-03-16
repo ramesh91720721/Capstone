@@ -1,11 +1,10 @@
 import React from "react";
-import BookList from "./components/BookList";
+import BookSearch from "./components/BookSearch";
 
 function App() {
     return (
         <div>
-            <h1>Library Management System</h1>
-            <BookList />
+            <BookSearch />
         </div>
     );
 }

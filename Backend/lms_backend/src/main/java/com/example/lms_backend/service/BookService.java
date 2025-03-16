@@ -18,7 +18,7 @@ public class BookService {
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
-
+ 
     // Get book by ID
     public Optional<Book> getBookById(Long bookId) {
         return bookRepository.findById(bookId);
@@ -39,6 +39,23 @@ public class BookService {
     public void deleteBook(Long bookId) {
         bookRepository.deleteById(bookId);
     }
+     
+    // // Get all books
+    // public List<Book> getAllBooks() {
+    //     return bookRepository.findAll();
+    // }
+
+    // Search books by title, author, or ISBN
+    public List<Book> searchBooks(String query) {
+        return bookRepository.findByTitleContainingOrAuthorContainingOrIsbnContaining(query, query, query);
+    }
+
+    
+
+    // Save a new book
+    public Book saveBook(Book book) {
+        return bookRepository.save(book);
+    }  
 }
   
 
