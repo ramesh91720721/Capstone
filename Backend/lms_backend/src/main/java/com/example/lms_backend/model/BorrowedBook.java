@@ -4,20 +4,29 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "borrowed_book")
 public class BorrowedBook {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private Long bookId;
+    
+    // ID of the book that was borrowed
+    private Long book_id;
+    
+    // (Optional) ID of the user who borrowed the book
+    private Long user_id;
+    
+    // Timestamp when the book was borrowed
     private LocalDateTime borrowedAt;
 
-    // Getters and Setters
+    // Getters and setters
+
     public Long getId() {
         return id;
     }
@@ -27,11 +36,19 @@ public class BorrowedBook {
     }
 
     public Long getBookId() {
-        return bookId;
+        return book_id;
     }
 
     public void setBookId(Long bookId) {
-        this.bookId = bookId;
+        this.book_id = bookId;
+    }
+
+    public Long getUserId() {
+        return user_id;
+    }
+
+    public void setUserId(Long userId) {
+        this.user_id = userId;
     }
 
     public LocalDateTime getBorrowedAt() {

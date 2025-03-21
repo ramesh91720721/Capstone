@@ -16,8 +16,13 @@ const LoginPage = () => {
         params: { username, password },
         withCredentials: true
       });
-      if (response.data === 'Login successful') {
-        navigate('/api/books');
+       if (response.data.success) {
+        // Navigate to the welcome page and pass the username in state
+        navigate('/api/books', { state: { username: response.data.username } });
+
+       // navigate('/books', { state: { username: response.data.username } });
+      } else {
+        setError(response.data.message);
       }
     } catch (err) {
       setError('Invalid username or password');

@@ -4,8 +4,12 @@ import com.example.lms_backend.Repository.BookRepository;
 import com.example.lms_backend.model.Book;
 import com.example.lms_backend.model.ApiResponse;
 import com.example.lms_backend.model.BorrowBookRequest;
+import com.example.lms_backend.model.Users;
 import com.example.lms_backend.service.BookService;
 import com.example.lms_backend.service.BorrowedBookService;
+
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +28,8 @@ public class BookController {
     @Autowired
     private BookRepository bookRepository;
 
-    //@Autowired
-   // private BorrowedBookService borrowedBookService;
+    @Autowired
+    private BorrowedBookService borrowedBookService;
     
     // Endpoint to retrieve all books
     @GetMapping("/all")
@@ -37,7 +41,7 @@ public class BookController {
     // Endpoint to search books by a query (e.g., title or author)
     @GetMapping("/search")
     public List<Book> searchBooks(@RequestParam String query) {
-        return bookService.searchBooks(query);
+        return bookService.searchBooks(query );
     }
     
     // Endpoint to add a new book
@@ -82,16 +86,49 @@ public class BookController {
 //        }
 //    }
 //    
-    // Alternative endpoint to borrow a book using a path variable
+//    // Alternative endpoint to borrow a book using a path variable
+//    @PostMapping("/borrow/{id}")
+//    public ResponseEntity<String> borrowBookById(@PathVariable long id) {
+//    	
+//    	 System.out.println("borrow ID: " + id);
+//        Book book = bookRepository.findById((long) id).orElse(null);
+//        if (book != null && (book.getAvilable() > 0)) {
+//            // Decrement the available copies by 1
+//            book.setAvilable(book.getAvilable() - 1);
+//            bookRepository.save(book);
+//            return ResponseEntity.ok("Book borrowed successfully");
+//        }
+//        return ResponseEntity.badRequest().body("Book is not available");
+//    }
+    
+    // Borrow a book using the path variable and record the borrowed entry.
     @PostMapping("/borrow/{id}")
-    public ResponseEntity<String> borrowBookById(@PathVariable Long id) {
+    public ResponseEntity<String> borrowBookById(@PathVariable Long id, HttpSession session) {
+        // Retrieve the user from session (assumes you have set this during login)
+    	 System.out.println("-------borrow ID: " + id);
+    	 
+        Users user = (Users) session.getAttribute("user");
+       // System.out.println("------userid" + user.getId());
+        
+//        if (user == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
+//        }
         Book book = bookRepository.findById(id).orElse(null);
+        System.out.println("------book avilable " + book.getAvilable());
         if (book != null && (book.getAvilable() > 0)) {
-            // Decrement the available copies by 1
+            // Decrement the available count by 1
             book.setAvilable(book.getAvilable() - 1);
             bookRepository.save(book);
-            return ResponseEntity.ok("Book borrowed successfully");
+            // Record the borrowed book in the borrowed_books table
+            boolean recordSaved = borrowedBookService.borrowBook(id, (long)1 );
+            if (recordSaved) {
+                return ResponseEntity.ok("Book borrowed successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Failed to record the borrowed book");
+            }
         }
         return ResponseEntity.badRequest().body("Book is not available");
     }
+    
 }
