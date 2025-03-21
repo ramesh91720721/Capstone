@@ -31,11 +31,14 @@ INSERT INTO books  VALUES
 
 
 CREATE TABLE userinfos (
-    user_id int  primary key,
+    user_id int   AUTO_INCREMENT  primary key,
     user_name varchar(100) not null,
     pw varchar(100) not null,
     email varchar(100),
     contact int not null
 );
-INSERT INTO userinfos  VALUES  (1, "Ramesh", "******", "myname@email.com", 12345); 
+
+ALTER TABLE users MODIFY user_id INT NOT NULL AUTO_INCREMENT;
+
+INSERT INTO userinfos  VALUES  (1, "ramesh", "root", "myname@email.com", 12345); 
 
