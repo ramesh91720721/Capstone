@@ -1,6 +1,8 @@
 CREATE DATABASE LMS_DB;
 use LMS_DB;
 
+ALTER TABLE books MODIFY book_id BIGINT NOT NULL AUTO_INCREMENT;
+
 CREATE TABLE books (
     book_id int primary key,
     title varchar(100) not null,

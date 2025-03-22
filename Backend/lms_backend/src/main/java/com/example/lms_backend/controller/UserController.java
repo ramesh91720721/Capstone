@@ -25,10 +25,12 @@ public class UserController {
         if (user != null) {
             session.setAttribute("user", user);
             // Return a JSON response with username
-            return ResponseEntity.ok(new LoginResponse(true, "Login successful", user.getUsername()));
+            //return ResponseEntity.ok(new LoginResponse(true, "Login successful",user.getId(), user.getUsername()));
+            return ResponseEntity.ok(new LoginResponse(true, "Login successful", user.getId(), user.getUsername()));
+            
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                             .body(new LoginResponse(false, "Invalid username or password", null));
+                             .body(new LoginResponse(false, "Invalid username or password",null, null));
     }
 
     @PostMapping("/logout")

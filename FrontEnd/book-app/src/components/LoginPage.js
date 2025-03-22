@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
+ //  const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -18,7 +19,11 @@ const LoginPage = () => {
       });
        if (response.data.success) {
         // Navigate to the welcome page and pass the username in state
-        navigate('/api/books', { state: { username: response.data.username } });
+        //navigate('/api/books', { state: { username: response.data.username , userid :response.data.user_id } });
+        navigate('/books', { state: { 
+            username: response.data.username, 
+            userId: response.data.userid 
+          } });
 
        // navigate('/books', { state: { username: response.data.username } });
       } else {

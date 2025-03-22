@@ -5,7 +5,7 @@ public class LoginResponse {
     private String message;
     private String username;
 
-    public LoginResponse(boolean success, String message, String username) {
+    public LoginResponse(boolean success, String message, Long userId, String username) {
         this.success = success;
         this.message = message;
         this.username = username;

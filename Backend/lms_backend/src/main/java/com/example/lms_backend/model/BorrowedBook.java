@@ -1,31 +1,26 @@
 package com.example.lms_backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "borrowed_book")
+@Table(name = "borrowed_books")
 public class BorrowedBook {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    // ID of the book that was borrowed
-    private Long book_id;
-    
-    // (Optional) ID of the user who borrowed the book
-    private Long user_id;
-    
-    // Timestamp when the book was borrowed
+
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
+    @Column(name = "book_id", nullable = false)
+    private Long bookId;
+
+    @Column(name = "borrowed_at")
     private LocalDateTime borrowedAt;
 
-    // Getters and setters
+    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -35,20 +30,20 @@ public class BorrowedBook {
         this.id = id;
     }
 
-    public Long getBookId() {
-        return book_id;
-    }
-
-    public void setBookId(Long bookId) {
-        this.book_id = bookId;
-    }
-
     public Long getUserId() {
-        return user_id;
+        return userId;
     }
 
     public void setUserId(Long userId) {
-        this.user_id = userId;
+        this.userId = userId;
+    }
+
+    public Long getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(Long bookId) {
+        this.bookId = bookId;
     }
 
     public LocalDateTime getBorrowedAt() {
