@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface BorrowedBookRepository extends JpaRepository<BorrowedBook, Long> {
     List<BorrowedBook> findByUserId(Long userId);
+    BorrowedBook findByTitleAndUserId(String title, Long userId);
 }

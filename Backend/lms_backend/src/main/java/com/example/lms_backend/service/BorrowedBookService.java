@@ -38,4 +38,36 @@ public class BorrowedBookService {
               return false;
          }
     }
+    
+//    public boolean returnBook(String title, Long userId ) {
+//        try {
+//             BorrowedBook borrowedBook = new BorrowedBook();
+//             
+//             System.out.println("--------  BorrowedBook called " + title );
+//             
+//           //  borrowedBook.setBookId(bookId);
+//             borrowedBook.setUserId(userId);
+//             borrowedBook.setBorrowedAt(LocalDateTime.now());
+//             borrowedBook.setTitle(title);
+//             borrowedBookRepository.save(borrowedBook);
+//             return true;
+//        } catch(Exception e) {
+//             // Log the exception as needed
+//             e.printStackTrace();
+//             return false;
+//        }
+//   }
+//    
+    public boolean returnBook(String title, Long userId) {
+        // Find the borrowed book record matching the title and user id.
+        // Adjust this query to match your entity fields.
+        BorrowedBook record = borrowedBookRepository.findByTitleAndUserId(title, userId);
+        if (record == null) {
+            System.out.println("No borrowed record found for title: " + title + " and userId: " + userId);
+            return false;
+        }
+        borrowedBookRepository.delete(record);
+        return true;
+    } 
+    
 }

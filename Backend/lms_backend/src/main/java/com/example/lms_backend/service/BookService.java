@@ -49,8 +49,9 @@ public class BookService {
     public List<Book> searchBooks(String query) {
         return bookRepository.findByTitleContainingOrAuthorContainingOrIsbnContaining(query, query, query);
     }
-
-    
+//    public Book findByTitle(String query) {
+//        return bookRepository.findByTitle(query);
+//    }
 
     // Save a new book
     public Book saveBook(Book book) {

@@ -133,4 +133,55 @@ public class BookController {
         return ResponseEntity.badRequest().body("Book is not available");
     }
     
+    @PostMapping("/return/{title}")
+    public ResponseEntity<String> returnBookByTitle(@PathVariable String title, HttpSession session) {
+        System.out.println("-------Return title: " + title);
+        
+        // Retrieve the logged-in user from the session
+//        Users user = (Users) session.getAttribute("user");
+//        if (user == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
+//        }
+       // System.out.println("-------get users: " + title);
+        // Find the book using the title
+        Book book = bookRepository.findByTitle(title).orElse(null);
+        if (book == null) {
+            return ResponseEntity.badRequest().body("Book not found");
+        }
+        
+        // Increase the available count (assuming returning the book makes it available again)
+        book.setAvilable(book.getAvilable() + 1);
+        bookRepository.save(book);
+        
+        // Record the return using the book title and the user's id
+        boolean recordReturned = borrowedBookService.returnBook(title,(long)1);
+        if (recordReturned) {
+            return ResponseEntity.ok("Book returned successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to record the book return");
+        }
+    }
+
+//    @PostMapping("/return/{title}")
+//    public ResponseEntity<String> returnBook(@PathVariable String title, HttpSession session) {
+//        // Retrieve the user from session and process the return
+//        Users user = (Users) session.getAttribute("user");
+//        if (user == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
+//        }
+//        
+//        // Retrieve the BorrowedBook record and process the return logic:
+//        // 1. Increase the available count for the book.
+//        // 2. Delete or update the BorrowedBook record.
+//         Book book = bookRepository.findByTitle(title).orElse(null);
+//        
+//        
+//        boolean success = borrowedBookService.returnBook(title, (long)1  );
+//        if (success) {
+//            return ResponseEntity.ok("Book returned successfully");
+//        } else {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to return book");
+//        }
+//    }
 }

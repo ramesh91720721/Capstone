@@ -87,6 +87,30 @@ const BookSearch = () => {
         fetchBorrowedBooks();
     }, [fetchBooks, fetchBorrowedBooks]);
 
+    const handleReturn = async (borrowedBook) => {
+      try {
+        // Here, assuming borrowedBook has a property for book id (bookId)
+        const response = await axios.post(
+          `http://localhost:8080/api/books/return/${borrowedBook.title}`,
+          null,
+          { withCredentials: true }
+        );
+        setMessage(response.data);
+        // Refresh the books and borrowed books list after returning
+        fetchBooks();
+        fetchBorrowedBooks();
+      } catch (error) {
+        console.error('Error returning book:', error);
+        setMessage('Error returning book');
+      }
+    };
+
+    // // Run both fetches on component mount
+    // useEffect(() => {
+    //     fetchBooks();
+    //     fetchBorrowedBooks();
+    // }, [fetchBooks, fetchBorrowedBooks]);
+
 
 
 
@@ -194,6 +218,8 @@ const BookSearch = () => {
                   <strong>{borrowed.title || `Book ID ${borrowed.bookId}`}</strong>
                   <br />
                   Borrowed on: {new Date(borrowed.borrowedAt).toLocaleString()}
+                  <br />
+                  <button onClick={() => handleReturn(borrowed)}>Return</button>
                 </li>
               ))}
             </ul>
