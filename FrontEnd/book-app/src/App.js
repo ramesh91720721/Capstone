@@ -79,7 +79,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage />} />
-        <Route path="/api/books" element={<BookSearch />} />
+        <Route path="/books" element={<BookSearch />} />
       </Routes>
     </Router>
   );

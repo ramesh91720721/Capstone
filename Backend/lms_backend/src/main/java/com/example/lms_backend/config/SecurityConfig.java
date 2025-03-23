@@ -46,6 +46,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth/login").permitAll()  // permit all requests to /auth endpoints (login, logout, etc.)
                 .requestMatchers("/api/books/**").permitAll()  // permit all requests to /auth endpoints (login, logout, etc.)
                 .requestMatchers("/api/**").permitAll()  // permit all requests to /auth endpoints (login, logout, etc.)
+                .requestMatchers("/books/**").permitAll()  // permit all requests to /auth endpoints (login, logout, etc.)
                 .anyRequest().authenticated(); // all other requests require authentication
 
         return http.build();
