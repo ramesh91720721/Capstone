@@ -13,13 +13,21 @@ public class BorrowedBook {
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
-
-    @Column(name = "book_id", nullable = false)
+    
+    
+    @Column(name = "book_id", nullable = true)
     private Long bookId;
 
     @Column(name = "borrowed_at")
     private LocalDateTime borrowedAt;
 
+    @Column(name = "bookname")
+    private String bookname;
+
+    
+    @Column(name = "title")
+    private String title;
+    
     // Getters and Setters
 
     public Long getId() {
@@ -30,6 +38,24 @@ public class BorrowedBook {
         this.id = id;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    
+    
+
+    public String getbookname() {
+        return bookname;
+    }
+
+    public void setbookname(String bookname) {
+        this.bookname = bookname;
+    }
+    
     public Long getUserId() {
         return userId;
     }

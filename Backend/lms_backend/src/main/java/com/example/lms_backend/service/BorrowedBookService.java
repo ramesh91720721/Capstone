@@ -20,12 +20,16 @@ public class BorrowedBookService {
      * @param userId ID of the user borrowing the book (if available)
      * @return true if saved successfully, false otherwise
      */
-    public boolean borrowBook(Long bookId, Long userId) {
+    public boolean borrowBook(String title, Long userId ) {
          try {
               BorrowedBook borrowedBook = new BorrowedBook();
-              borrowedBook.setBookId(bookId);
+              
+              System.out.println("--------  BorrowedBook called " + title );
+              
+            //  borrowedBook.setBookId(bookId);
               borrowedBook.setUserId(userId);
               borrowedBook.setBorrowedAt(LocalDateTime.now());
+              borrowedBook.setTitle(title);
               borrowedBookRepository.save(borrowedBook);
               return true;
          } catch(Exception e) {

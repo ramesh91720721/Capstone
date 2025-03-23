@@ -119,8 +119,10 @@ public class BookController {
             // Decrement the available count by 1
             book.setAvilable(book.getAvilable() - 1);
             bookRepository.save(book);
+            
+            System.out.println("bookRepository.save(book); called "  );
             // Record the borrowed book in the borrowed_books table
-            boolean recordSaved = borrowedBookService.borrowBook(id, (long)1 );
+            boolean recordSaved = borrowedBookService.borrowBook(book.getTitle(), (long)1   );
             if (recordSaved) {
                 return ResponseEntity.ok("Book borrowed successfully");
             } else {
