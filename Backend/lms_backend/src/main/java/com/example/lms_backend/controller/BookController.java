@@ -2,6 +2,7 @@ package com.example.lms_backend.controller;
 
 import com.example.lms_backend.Repository.BookRepository;
 import com.example.lms_backend.model.Book;
+import com.example.lms_backend.model.BorrowedBook;
 import com.example.lms_backend.model.ApiResponse;
 import com.example.lms_backend.model.BorrowBookRequest;
 import com.example.lms_backend.model.Users;
@@ -129,6 +130,16 @@ public class BookController {
         Book book = bookRepository.findById(id).orElse(null);
         System.out.println("------book avilable " + book.getAvilable());
         if (book != null && (book.getAvilable() > 0)) {
+        	
+        	
+        	   // Check if the user already borrowed this book
+            BorrowedBook existingBorrow = borrowedBookRepository.findByTitleAndUserId(book.getTitle(),(long)1);
+            if (existingBorrow != null) {
+                return ResponseEntity.badRequest().body("You have already borrowed this book.");
+            }
+            
+            
+            
             // Decrement the available count by 1
             book.setAvilable(book.getAvilable() - 1);
             bookRepository.save(book);

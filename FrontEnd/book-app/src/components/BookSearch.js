@@ -87,7 +87,8 @@ const BookSearch = () => {
       fetchBorrowedBooks();
     } catch (error) {
       console.error('Error borrowing book:', error);
-       setMessage("Error: Maximum borrow limit reached (3 books).");
+       setMessage("Error:  Maximum borrow limit reached (3 books).");
+       setMessage(error.response.data);
     }
   };
 
