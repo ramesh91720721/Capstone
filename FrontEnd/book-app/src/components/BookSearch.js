@@ -29,6 +29,29 @@ const BookSearch = () => {
            // setLoading(false);
         };
 
+
+        const searchBooks = async () => {
+        if (!query.trim()) {
+            fetchAllBooks();
+            return;
+        }
+
+        //setLoading(true);
+        try {
+            const response = await axios.get(`http://localhost:8080/api/books/search?query=${query}`);
+            setBooks(response.data);
+        } catch (error) {
+            console.error("Error searching books:", error);
+        }
+        //setLoading(false);
+    };
+
+    useEffect(() => {
+        fetchAllBooks();
+    }, []);
+
+
+
   // Function to fetch books
   const fetchBooks  = useCallback(async () => {
     try {
@@ -49,7 +72,8 @@ const BookSearch = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchBooks();
+    searchBooks();
+    //fetchBooks();
   };
 
   const handleBorrow = async (id) => {
