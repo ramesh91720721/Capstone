@@ -27,17 +27,31 @@ public class Users {
     @Column(nullable = false)
     private String password;
     
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String role; // USER or ADMIN
+    
+    @Column(nullable = true)
+    private long Contact;
+    
     
     // Getters and Setters
     public Long getId() {
         return user_id;
     }
 
+    public void setContact(long Contact) {
+        this.Contact = Contact;
+    }
+    
+    // Getters and Setters
+    public long getContact() {
+        return Contact;
+    }
+
     public void setId(Long id) {
         this.user_id = id;
     }
+    
 
     public String getUsername() {
         return username;

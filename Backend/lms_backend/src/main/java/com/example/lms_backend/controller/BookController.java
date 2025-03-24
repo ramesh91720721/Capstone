@@ -7,6 +7,7 @@ import com.example.lms_backend.model.BorrowBookRequest;
 import com.example.lms_backend.model.Users;
 import com.example.lms_backend.service.BookService;
 import com.example.lms_backend.service.BorrowedBookService;
+import com.example.lms_backend.Repository.BorrowedBookRepository;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -30,6 +31,9 @@ public class BookController {
 
     @Autowired
     private BorrowedBookService borrowedBookService;
+    
+    @Autowired
+    private BorrowedBookRepository borrowedBookRepository;
     
     // Endpoint to retrieve all books
     @GetMapping("/all")
@@ -113,6 +117,15 @@ public class BookController {
 //        if (user == null) {
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
 //        }
+        
+     // Check if the user already borrowed 3 books
+        int currentBorrowCount = borrowedBookRepository.countByUserId((long)1);
+        if (currentBorrowCount >= 3) {
+            return ResponseEntity.badRequest().body("Maximum borrow limit reached (3 books).");
+        }
+        
+         
+        
         Book book = bookRepository.findById(id).orElse(null);
         System.out.println("------book avilable " + book.getAvilable());
         if (book != null && (book.getAvilable() > 0)) {

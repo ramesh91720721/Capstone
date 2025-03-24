@@ -63,7 +63,7 @@ const BookSearch = () => {
       fetchBorrowedBooks();
     } catch (error) {
       console.error('Error borrowing book:', error);
-      setMessage('Error borrowing book');
+       setMessage("Error: Maximum borrow limit reached (3 books).");
     }
   };
 
@@ -89,6 +89,7 @@ const BookSearch = () => {
 
     const handleReturn = async (borrowedBook) => {
       try {
+        
         // Here, assuming borrowedBook has a property for book id (bookId)
         const response = await axios.post(
           `http://localhost:8080/api/books/return/${borrowedBook.title}`,

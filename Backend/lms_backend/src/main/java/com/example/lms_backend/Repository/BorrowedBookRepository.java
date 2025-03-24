@@ -10,4 +10,6 @@ import java.util.List;
 public interface BorrowedBookRepository extends JpaRepository<BorrowedBook, Long> {
     List<BorrowedBook> findByUserId(Long userId);
     BorrowedBook findByTitleAndUserId(String title, Long userId);
+    
+    int countByUserId(Long userId);
 }

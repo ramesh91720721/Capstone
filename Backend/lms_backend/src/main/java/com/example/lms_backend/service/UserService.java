@@ -82,5 +82,19 @@ public class UserService {
         }
         return null;
     }
+    
+    
+    public Users addUser(String username, String password) {
+        Users user = userRepository.findByUsername(username);
+        // Make sure passwords are stored as BCrypt hashes.
+        System.out.println("User name: " + username);
+         
+        //if (user != null && passwordEncoder.matches(password, user.getPassword())) {
+        if (user != null && user.getPassword().equals(password)) {
+            return user;
+        }
+        return null;
+    }
+    
 }
 

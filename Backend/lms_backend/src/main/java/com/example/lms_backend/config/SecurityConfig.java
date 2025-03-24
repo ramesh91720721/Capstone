@@ -43,7 +43,7 @@ public class SecurityConfig {
             .and()
             .csrf().disable() // disable CSRF protection for simplicity (adjust as needed)
             .authorizeRequests()
-                .requestMatchers("/auth/login").permitAll()  // permit all requests to /auth endpoints (login, logout, etc.)
+                .requestMatchers("/auth/**").permitAll()  // permit all requests to /auth endpoints (login, logout, etc.)
                 .requestMatchers("/api/books/**").permitAll()  // permit all requests to /auth endpoints (login, logout, etc.)
                 .requestMatchers("/api/**").permitAll()  // permit all requests to /auth endpoints (login, logout, etc.)
                 .requestMatchers("/books/**").permitAll()  // permit all requests to /auth endpoints (login, logout, etc.)
