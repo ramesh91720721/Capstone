@@ -21,8 +21,8 @@ public class BorrowedBook {
     @Column(name = "borrowed_at")
     private LocalDateTime borrowedAt;
 
-    @Column(name = "bookname")
-    private String bookname;
+    @Column(name = "fine")
+    private int fine;
 
     
     @Column(name = "title")
@@ -48,12 +48,12 @@ public class BorrowedBook {
     
     
 
-    public String getbookname() {
-        return bookname;
+    public int getFine() {
+        return fine;
     }
 
-    public void setbookname(String bookname) {
-        this.bookname = bookname;
+    public void setFine(int fine) {
+        this.fine = fine;
     }
     
     public Long getUserId() {

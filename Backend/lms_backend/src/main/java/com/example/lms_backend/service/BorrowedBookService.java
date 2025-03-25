@@ -1,17 +1,28 @@
 package com.example.lms_backend.service;
 
 import com.example.lms_backend.model.BorrowedBook;
+import com.example.lms_backend.model.FineConfig;
 import com.example.lms_backend.Repository.BorrowedBookRepository;
+import com.example.lms_backend.Repository.FineConfigRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.time.ZoneId;
+import java.util.Date;
 import java.time.LocalDateTime;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class BorrowedBookService {
 
     @Autowired
     private BorrowedBookRepository borrowedBookRepository;
+    
+    @Autowired
+    private FineConfigRepository fineConfigRepository;
+    
     
     /**
      * Records a borrowed book.
@@ -69,5 +80,22 @@ public class BorrowedBookService {
         borrowedBookRepository.delete(record);
         return true;
     } 
+    
+    public double calculateFine(BorrowedBook borrowedBook) {
+        // Retrieve fine configuration (assuming one record exists)
+        FineConfig config = fineConfigRepository.findAll().stream().findFirst().orElse(null);
+        double rate = (config != null) ? config.getFineRate() : 1.0; // default $1 per minute if none configured
+        
+        // Calculate elapsed time in minutes
+        //long diffInMillis = new Date().getTime() - borrowedBook.getBorrowedAt().getTime();
+        long diffInMillis = new Date().getTime() - 
+        	    Date.from(borrowedBook.getBorrowedAt().atZone(ZoneId.systemDefault()).toInstant()).getTime();
+        
+        double elapsedMinutes = diffInMillis / (1000.0 * 60);
+        
+        // Subtract the 10-minute grace period
+        double overdueMinutes = elapsedMinutes - 10;
+        return (overdueMinutes > 0) ? overdueMinutes * rate : 0.0;
+   }
     
 }

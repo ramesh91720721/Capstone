@@ -32,6 +32,9 @@ INSERT INTO books  VALUES
 
 
 
+
+
+
 CREATE TABLE userinfos (
     user_id int   AUTO_INCREMENT  primary key,
     user_name varchar(100) not null,
@@ -44,3 +47,14 @@ ALTER TABLE users MODIFY user_id INT NOT NULL AUTO_INCREMENT;
 
 INSERT INTO userinfos  VALUES  (1, "ramesh", "root", "myname@email.com", 12345); 
 
+
+
+
+// fine_config
+
+CREATE TABLE fine_config
+
+CREATE TABLE fine_config (
+    id BIGINT primary key,
+    fineRate BIGINT not null,
+);

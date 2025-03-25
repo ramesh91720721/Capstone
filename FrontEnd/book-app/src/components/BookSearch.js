@@ -112,6 +112,17 @@ const BookSearch = () => {
         fetchBorrowedBooks();
     }, [fetchBooks, fetchBorrowedBooks]);
 
+
+       // Auto-refresh borrowed books every 1 minute (60000 ms)
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      fetchBorrowedBooks();
+    }, 30000); // adjust the interval as needed
+
+    // Clear the interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [fetchBorrowedBooks]);
+  
     const handleReturn = async (borrowedBook) => {
       try {
         
@@ -233,26 +244,44 @@ const BookSearch = () => {
           </table>
         </div>
 
-        {/* Right Panel - Borrowed Books Details */}
-        <div style={rightPanelStyle}>
-          <h3>Your Borrowed Books</h3>
-          {borrowedBooks.length > 0 ? (
-            <ul>
-              {borrowedBooks.map((borrowed) => (
-                <li key={borrowed.id}>
-                  {/* Customize this display as needed; here we assume borrowed book record includes a title and borrowedAt */}
-                  <strong>{borrowed.title || `Book ID ${borrowed.bookId}`}</strong>
-                  <br />
-                  Borrowed on: {new Date(borrowed.borrowedAt).toLocaleString()}
-                  <br />
-                  <button onClick={() => handleReturn(borrowed)}>Return</button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No borrowed books</p>
+{/* Right Panel - Borrowed Books Details */}
+<div style={rightPanelStyle}>
+  <h3>Your Borrowed Books</h3>
+  {borrowedBooks.length > 0 ? (
+    <ul>
+      {borrowedBooks.map((borrowed) => {
+        // Calculate the difference in minutes between now and when the book was borrowed
+        const borrowedTime = new Date(borrowed.borrowedAt);
+        const currentTime = new Date();
+        const diffInMinutes = (currentTime - borrowedTime) / (1000 * 60);
+        const isOverdue = diffInMinutes > 1; // Overdue if more than 10 minutes
+        
+        return (
+          <li key={borrowed.id} style={{ color: isOverdue ? 'red' : 'inherit' }}>
+            <strong>{borrowed.title}</strong>
+         
+            Borrowed on: {borrowedTime.toLocaleString()}
+            <br />
+                    
+          {borrowed.fine > 0 && (
+            <span style={{ marginLeft: '10px', fontWeight: 'bold' }}>
+              Overdue Fine: ${borrowed.fine.toFixed(2)}
+            </span>
           )}
-        </div>
+          <br />
+
+
+            <button onClick={() => handleReturn(borrowed)}>Return</button>
+            {isOverdue && <span style={{ marginLeft: '10px', fontWeight: 'bold' }}>Overdue</span>}
+          </li>
+        );
+      })}
+    </ul>
+  ) : (
+    <p>No borrowed books</p>
+  )}
+</div>
+
       </div>
     </div>
   );
