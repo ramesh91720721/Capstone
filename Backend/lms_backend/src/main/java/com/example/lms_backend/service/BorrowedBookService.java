@@ -81,10 +81,10 @@ public class BorrowedBookService {
         return true;
     } 
     
-    public double calculateFine(BorrowedBook borrowedBook) {
+    public int calculateFine(BorrowedBook borrowedBook) {
         // Retrieve fine configuration (assuming one record exists)
         FineConfig config = fineConfigRepository.findAll().stream().findFirst().orElse(null);
-        double rate = (config != null) ? config.getFineRate() : 1.0; // default $1 per minute if none configured
+        int rate = (int) ((config != null) ? config.getFineRate() : 1); // default $1 per minute if none configured
         
         // Calculate elapsed time in minutes
         //long diffInMillis = new Date().getTime() - borrowedBook.getBorrowedAt().getTime();
@@ -94,8 +94,8 @@ public class BorrowedBookService {
         double elapsedMinutes = diffInMillis / (1000.0 * 60);
         
         // Subtract the 10-minute grace period
-        double overdueMinutes = elapsedMinutes - 10;
-        return (overdueMinutes > 0) ? overdueMinutes * rate : 0.0;
+        double overdueMinutes = elapsedMinutes ;
+        return (int)( (overdueMinutes > 0) ? overdueMinutes * rate : 0);
    }
     
 }

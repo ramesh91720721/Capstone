@@ -32,6 +32,13 @@ public class BorrowedBookController {
     @GetMapping("/borrowed-books")
     public ResponseEntity<?> getBorrowedBooks(@RequestParam(name = "user_id") Long userId) {
         List<BorrowedBook> borrowedBooks = borrowedBookRepository.findByUserId(userId);
+        
+        for (BorrowedBook book : borrowedBooks) {
+            System.out.println(book.getTitle());
+            int fine = borrowedBookService.calculateFine(book);
+            book.setFine(fine);
+        }
+        	
         return ResponseEntity.ok(borrowedBooks);
     }
     

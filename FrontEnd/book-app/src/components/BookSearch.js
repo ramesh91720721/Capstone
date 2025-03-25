@@ -185,11 +185,11 @@ const BookSearch = () => {
     flex: 1,
     backgroundColor: '#ffffe0',
     padding: '1rem',
-    borderRadius: '4px',
+    borderRadius: '1px',
   };
 
   return (
-    <div style={{ padding: '2rem' }}>
+    <div style={{ padding: '5rem' }}>
       <h2>
         Welcome, <strong>{username}</strong>!
       </h2>
@@ -259,20 +259,18 @@ const BookSearch = () => {
         return (
           <li key={borrowed.id} style={{ color: isOverdue ? 'red' : 'inherit' }}>
             <strong>{borrowed.title}</strong>
-         
-            Borrowed on: {borrowedTime.toLocaleString()}
+             <br />
+             Borrowed on: {borrowedTime.toLocaleString()}
             <br />
                     
           {borrowed.fine > 0 && (
             <span style={{ marginLeft: '10px', fontWeight: 'bold' }}>
               Overdue Fine: ${borrowed.fine.toFixed(2)}
+               <br />
             </span>
           )}
-          <br />
-
-
             <button onClick={() => handleReturn(borrowed)}>Return</button>
-            {isOverdue && <span style={{ marginLeft: '10px', fontWeight: 'bold' }}>Overdue</span>}
+             <br /> <br />
           </li>
         );
       })}
