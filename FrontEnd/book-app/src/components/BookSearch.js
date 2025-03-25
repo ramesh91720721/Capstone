@@ -1,4 +1,4 @@
-import React, { useState, useEffect ,useCallback} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -7,53 +7,52 @@ const BookSearch = () => {
   const [books, setBooks] = useState([]);
   const [message, setMessage] = useState('');
   const [borrowedBooks, setBorrowedBooks] = useState([]);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
- // const [loading, setLoading] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
   // Retrieve the username from location.state
   const username = location.state?.username || 'User';
-  const   userid = location.state?.userId || 1;
+  const userid = location.state?.userId || 1;
 
+  // Live clock: update current time every second
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
 
-    const fetchAllBooks = async () => {
-        console.log(" fetch all books ")
-           // setLoading(true);
-            try {
-                const response = await axios.get("http://localhost:8080/api/books/all");
-                setBooks(response.data);
-            } catch (error) {
-                console.error("Error fetching books:", error);
-            }
-           // setLoading(false);
-        };
+  const fetchAllBooks = async () => {
+    console.log("fetch all books");
+    try {
+      const response = await axios.get("http://localhost:8080/api/books/all");
+      setBooks(response.data);
+    } catch (error) {
+      console.error("Error fetching books:", error);
+    }
+  };
 
+  const searchBooks = async () => {
+    if (!query.trim()) {
+      fetchAllBooks();
+      return;
+    }
+    try {
+      const response = await axios.get(`http://localhost:8080/api/books/search?query=${query}`);
+      setBooks(response.data);
+    } catch (error) {
+      console.error("Error searching books:", error);
+    }
+  };
 
-        const searchBooks = async () => {
-        if (!query.trim()) {
-            fetchAllBooks();
-            return;
-        }
-
-        //setLoading(true);
-        try {
-            const response = await axios.get(`http://localhost:8080/api/books/search?query=${query}`);
-            setBooks(response.data);
-        } catch (error) {
-            console.error("Error searching books:", error);
-        }
-        //setLoading(false);
-    };
-
-    useEffect(() => {
-        fetchAllBooks();
-    }, []);
-
-
+  useEffect(() => {
+    fetchAllBooks();
+  }, []);
 
   // Function to fetch books
-  const fetchBooks  = useCallback(async () => {
+  const fetchBooks = useCallback(async () => {
     try {
       const response = await axios.get('http://localhost:8080/api/books/search', {
         params: { query },
@@ -63,7 +62,7 @@ const BookSearch = () => {
     } catch (error) {
       console.error('Error fetching books:', error);
     }
-  }, []); // no dependencies if fetchBooks doesn't use external values
+  }, [query]);
 
   // Fetch all books initially
   useEffect(() => {
@@ -73,12 +72,11 @@ const BookSearch = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     searchBooks();
-    //fetchBooks();
   };
 
   const handleBorrow = async (id) => {
     try {
-         const cleanId = id.toString().replace(/['"]/g, '');
+      const cleanId = id.toString().replace(/['"]/g, '');
       const response = await axios.post(`http://localhost:8080/api/books/borrow/${cleanId}`, null, {
         withCredentials: true,
       });
@@ -87,69 +85,51 @@ const BookSearch = () => {
       fetchBorrowedBooks();
     } catch (error) {
       console.error('Error borrowing book:', error);
-       setMessage("Error:  Maximum borrow limit reached (3 books).");
-       setMessage(error.response.data);
+      setMessage(error.response.data);
     }
   };
 
-  
-        const fetchBorrowedBooks = useCallback(async () => {
-        try {
-            const response = await axios.get('http://localhost:8080/api/borrowed-books', {
-            params: { user_id: userid },
-            withCredentials: true,
-            });
-            setBorrowedBooks(response.data);
-        } catch (error) {
-            console.error('Error fetching borrowed books:', error);
-        }
-        }, [userid]);
+  const fetchBorrowedBooks = useCallback(async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/borrowed-books', {
+        params: { user_id: userid },
+        withCredentials: true,
+      });
+      setBorrowedBooks(response.data);
+    } catch (error) {
+      console.error('Error fetching borrowed books:', error);
+    }
+  }, [userid]);
 
+  // Run both fetches on component mount
+  useEffect(() => {
+    fetchBooks();
+    fetchBorrowedBooks();
+  }, [fetchBooks, fetchBorrowedBooks]);
 
-    // Run both fetches on component mount
-    useEffect(() => {
-        fetchBooks();
-        fetchBorrowedBooks();
-    }, [fetchBooks, fetchBorrowedBooks]);
-
-
-       // Auto-refresh borrowed books every 1 minute (60000 ms)
+  // Auto-refresh borrowed books every 30 seconds
   useEffect(() => {
     const intervalId = setInterval(() => {
       fetchBorrowedBooks();
     }, 30000); // adjust the interval as needed
-
-    // Clear the interval on component unmount
     return () => clearInterval(intervalId);
   }, [fetchBorrowedBooks]);
-  
-    const handleReturn = async (borrowedBook) => {
-      try {
-        
-        // Here, assuming borrowedBook has a property for book id (bookId)
-        const response = await axios.post(
-          `http://localhost:8080/api/books/return/${borrowedBook.title}`,
-          null,
-          { withCredentials: true }
-        );
-        setMessage(response.data);
-        // Refresh the books and borrowed books list after returning
-        fetchBooks();
-        fetchBorrowedBooks();
-      } catch (error) {
-        console.error('Error returning book:', error);
-        setMessage('Error returning book');
-      }
-    };
 
-    // // Run both fetches on component mount
-    // useEffect(() => {
-    //     fetchBooks();
-    //     fetchBorrowedBooks();
-    // }, [fetchBooks, fetchBorrowedBooks]);
-
-
-
+  const handleReturn = async (borrowedBook) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/api/books/return/${borrowedBook.title}`,
+        null,
+        { withCredentials: true }
+      );
+      setMessage(response.data);
+      fetchBooks();
+      fetchBorrowedBooks();
+    } catch (error) {
+      console.error('Error returning book:', error);
+      setMessage('Error returning book');
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -160,27 +140,19 @@ const BookSearch = () => {
     }
   };
 
-//   const handleListALL = async () => {
-//     try {
-//        const response = await axios.post('http://localhost:8080/api/books/all', null, { withCredentials: true });
-//       setMessage(response.data);
-//     } catch (err) {
-//       console.error("Listall  failed", err);
-//     }
-//   };
+  // Container style with flex layout
+  const containerStyle = {
+    display: 'flex',
+    gap: '1rem',
+    padding: '1rem',
+  };
 
-    // Container style with flex layout
-    const containerStyle = {
-        display: 'flex',
-        gap: '1rem',
-        padding: '1rem',
-    };
+  // Left panel (Book search area) style
+  const leftPanelStyle = {
+    flex: 3,
+  };
 
-    // Left panel (Book search area) style
-    const leftPanelStyle = {
-        flex: 3,
-    };
-   // Right panel (Borrowed books area) style with light yellow background
+  // Right panel (Borrowed books area) style with light yellow background
   const rightPanelStyle = {
     flex: 1,
     backgroundColor: '#ffffe0',
@@ -193,6 +165,7 @@ const BookSearch = () => {
       <h2>
         Welcome, <strong>{username}</strong>!
       </h2>
+      <p>Current Time: {currentTime.toLocaleTimeString()}</p>
       <button onClick={handleLogout}>Logout</button>
       <div style={containerStyle}>
         {/* Left Panel - Book Search */}
@@ -244,44 +217,43 @@ const BookSearch = () => {
           </table>
         </div>
 
-{/* Right Panel - Borrowed Books Details */}
-<div style={rightPanelStyle}>
-  <h3>Your Borrowed Books</h3>
-  {borrowedBooks.length > 0 ? (
-    <ul>
-      {borrowedBooks.map((borrowed) => {
-        // Calculate the difference in minutes between now and when the book was borrowed
-        const borrowedTime = new Date(borrowed.borrowedAt);
-        const currentTime = new Date();
-        const diffInMinutes = (currentTime - borrowedTime) / (1000 * 60);
-        const isOverdue = diffInMinutes > 1; // Overdue if more than 10 minutes
-        
-        return (
-          <li key={borrowed.id} style={{ color: isOverdue ? 'red' : 'inherit' }}>
-            <strong>{borrowed.title}</strong>
-             <br />
-             Borrowed on: {borrowedTime.toLocaleString()}
-            <br />
-                    
-          {borrowed.fine > 0 && (
-            <span style={{ marginLeft: '10px', fontWeight: 'bold' }}>
-              Overdue Fine: ${borrowed.fine.toFixed(2)}
-               <br />
-            </span>
-          )}
-            <button onClick={() => handleReturn(borrowed)}>Return</button>
-             <br /> <br />
-          </li>
-        );
-      })}
-    </ul>
-  ) : (
-    <p>No borrowed books</p>
-  )}
-</div>
+        {/* Right Panel - Borrowed Books Details */}
+        <div style={rightPanelStyle}>
+          <h3>Your Borrowed Books</h3>
+          {borrowedBooks.length > 0 ? (
+            <ul>
+              {borrowedBooks.map((borrowed) => {
+                // Calculate the difference in minutes between now and when the book was borrowed
+                const borrowedTime = new Date(borrowed.borrowedAt);
+                const currentTime = new Date();
+                const diffInMinutes = (currentTime - borrowedTime) / (1000 * 60);
+                const isOverdue = diffInMinutes > 1; // Overdue if more than 1 minute
 
+                return (
+                  <li key={borrowed.id} style={{ color: isOverdue ? 'red' : 'inherit' }}>
+                    <strong>{borrowed.title}</strong>
+                    <br />
+                    Borrowed on: {borrowedTime.toLocaleString()}
+                    <br />
+                    {borrowed.fine > 0 && (
+                      <span style={{ marginLeft: '10px', fontWeight: 'bold' }}>
+                        Overdue Fine: ${borrowed.fine.toFixed(2)}
+                        <br />
+                      </span>
+                    )}
+                    <button onClick={() => handleReturn(borrowed)}>Return</button>
+                    <br /><br />
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p>No borrowed books</p>
+          )}
+        </div>
       </div>
     </div>
   );
 };
+
 export default BookSearch;
